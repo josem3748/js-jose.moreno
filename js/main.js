@@ -1,7 +1,7 @@
 function obtenerNoticias() {
   let xmlhttp = new XMLHttpRequest();
   let url =
-    "https://newsapi.org/v2/top-headlines?sources=google-news-ar&apiKey=01f732e95a9448b697af56960a03675c";
+    "https://gnews.io/api/v4/search?q=ukraine&lang=es&max=5&token=be56fa792e1ba8e4fb52a3633eea134f";
 
   xmlhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -18,11 +18,11 @@ function obtenerNoticias() {
     for (i = 0; i < obj.articles.length; i++) {
       out +=
         "<li style='display: block;'><img src='" +
-        obj.articles[i].urlToImage +
+        obj.articles[i].image +
         "'><h3>" +
         obj.articles[i].title +
         "</h3><span>" +
-        obj.articles[i].author +
+        obj.articles[i].source.name +
         " - " +
         obj.articles[i].publishedAt +
         "</span><p>" +
