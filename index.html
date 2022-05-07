@@ -9,10 +9,16 @@
   <body>
     <h1 style="text-align: center">Noticias rápidas</h1>
     <p style="text-align: center">
-      Simulador de portal de noticias sobre la guerra en Ucrania.
+      Ingrese el tema que le interese. A continuación, haga clic en "Obtener
+      noticias".
     </p>
     <div style="text-align: center">
-      <button onclick="obtenerNoticias()">Obtener noticias</button>
+      <input type="text" id="query" />
+      <input
+        type="button"
+        onclick="obtenerNoticias()"
+        value="Obtener noticias"
+      />
     </div>
     <div id="id01"></div>
     <script src="./js/main.js"></script>
