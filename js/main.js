@@ -1,3 +1,7 @@
+let botonDeAccion = document.getElementById("obtenerNoticias");
+
+botonDeAccion.addEventListener("click", obtenerNoticias);
+
 function obtenerNoticias() {
   let xmlhttp = new XMLHttpRequest();
   let consulta = document.getElementById("query").value;
