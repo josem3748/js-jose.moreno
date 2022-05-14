@@ -1,6 +1,13 @@
+let input = document.getElementById("query");
 let botonDeAccion = document.getElementById("obtenerNoticias");
 
 botonDeAccion.addEventListener("click", obtenerNoticias);
+
+input.addEventListener("keypress", function (event) {
+  if (event.key === "Enter") {
+    botonDeAccion.click();
+  }
+});
 
 function obtenerNoticias() {
   let xmlhttp = new XMLHttpRequest();
