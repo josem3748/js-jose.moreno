@@ -1,0 +1,15 @@
+.centro {
+  text-align: center;
+}
+
+#id01 {
+  top: 10px;
+  left: 40px;
+  position: absolute;
+}
+
+#id02 {
+  top: 30px;
+  right: 60px;
+  position: absolute;
+}
