@@ -9,9 +9,7 @@ let botonDeAccion = document.getElementById("obtenerNoticias");
 
 // Listener teclado Enter botón "Obtener noticias"
 input.addEventListener("keypress", function (event) {
-  if (event.key === "Enter") {
-    botonDeAccion.click();
-  }
+  event.key === "Enter" && botonDeAccion.click();
 });
 
 // Listener click botón "Obtener noticias"
@@ -22,9 +20,11 @@ function obtenerNoticias() {
   let consulta = document.getElementById("query").value;
   consulta = consulta.trim();
 
-  if (consulta == "") {
-    return alert("Por favor ingresa un tema.");
-  }
+  if (consulta == "")
+    return swal({
+      text: "Por favor ingresa un tema.",
+      icon: "warning",
+    });
 
   let url =
     "https://gnews.io/api/v4/search?q=" +
@@ -51,10 +51,10 @@ function obtenerNoticias() {
 
 function generarNoticias(obj) {
   let out = "";
-  if (obj.articles.length == 0) {
+  if (obj.articles.length == 0)
     out =
       "<br><p style='text-align: center;'>No se encontraron resultados. Prueba otro tema.</p>";
-  }
+
   out += "<br><ul>";
   let i;
   for (i = 0; i < obj.articles.length; i++) {
@@ -66,7 +66,9 @@ function generarNoticias(obj) {
       "</h3><span>" +
       obj.articles[i].source.name +
       " - " +
-      obj.articles[i].publishedAt +
+      luxon.DateTime.fromISO(obj.articles[i].publishedAt).toLocaleString(
+        luxon.DateTime.DATETIME_SHORT
+      ) +
       "</span><p>" +
       obj.articles[i].description +
       "</p><a href='" +
@@ -87,18 +89,14 @@ function generarNoticias(obj) {
 let noticiasEnLS = JSON.parse(localStorage.getItem("noticias"));
 
 // Mostrar noticias si están guardadas en local
-if (noticiasEnLS) {
-  desplegarNoticias(noticiasEnLS);
-}
+noticiasEnLS && desplegarNoticias(noticiasEnLS);
 
 function desplegarNoticias(noticias) {
   document.getElementById("id03").innerHTML = noticias;
 
   // Manteniendo la última consulta guardada en local en el input
   let consultaEnLS = JSON.parse(localStorage.getItem("consulta"));
-  if (consultaEnLS) {
-    document.getElementById("query").value = consultaEnLS;
-  }
+  if (consultaEnLS) document.getElementById("query").value = consultaEnLS;
 }
 
 function manipularRecientes(consulta) {
@@ -107,9 +105,7 @@ function manipularRecientes(consulta) {
     busquedasRecientes.unshift(consulta);
 
     // Guardar solo las 3 últimas
-    if (busquedasRecientes.length > 3) {
-      busquedasRecientes.pop();
-    }
+    busquedasRecientes.length > 3 && busquedasRecientes.pop();
 
     // Guardando las últimas búsquedas en local
     let busquedasRecientesEnJSON = JSON.stringify(busquedasRecientes);
@@ -130,11 +126,7 @@ function ultimaConsulta(consulta) {
 /*-----------------------------------------------------*/
 
 // Revisando si hay búsquedas en local
-let busquedasRecientes = [];
-let busquedasRecientesEnLS = JSON.parse(localStorage.getItem("busquedas"));
-if (busquedasRecientesEnLS) {
-  busquedasRecientes = busquedasRecientesEnLS;
-}
+let busquedasRecientes = JSON.parse(localStorage.getItem("busquedas")) || [];
 
 // Continuar mostrando las búsquedas
 desplegarBusquedasRecientes();
@@ -155,24 +147,23 @@ function desplegarBusquedasRecientes() {
 /*---------------------------------------------------*/
 
 // Si el usuario está guardado en local desplegarlo
-let usuario;
-let usuarioEnLS = JSON.parse(localStorage.getItem("usuario"));
-if (usuarioEnLS && usuarioEnLS != "") {
-  desplegarUsuario(usuarioEnLS);
-}
+let usuario = JSON.parse(localStorage.getItem("usuario"));
+usuario && desplegarUsuario(usuario);
 
 // Guardando variable de botón de registro
 let botonUsuario = document.getElementById("registroUsuario");
 
 // Listener click botón de registro
-botonUsuario.addEventListener("click", registroDeUsuario);
+botonUsuario && botonUsuario.addEventListener("click", registroDeUsuario);
 
 function registroDeUsuario() {
   // Consiguiendo el nombre del usuario
   usuario = document.getElementById("usuario").value;
-  if (usuario == "") {
-    return alert("Por favor ingresa tu nombre.");
-  }
+  if (usuario == "")
+    return swal({
+      text: "Por favor ingresa tu nombre.",
+      icon: "warning",
+    });
 
   // Guardando usuario registrado en local
   let usuarioJSON = JSON.stringify(usuario);
