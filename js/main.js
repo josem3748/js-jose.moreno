@@ -12,11 +12,7 @@ input.addEventListener("keypress", function (event) {
   event.key === "Enter" && botonDeAccion.click();
 });
 
-// Listener click botón "Obtener noticias"
-botonDeAccion.addEventListener("click", obtenerNoticias);
-
-function obtenerNoticias() {
-  let xmlhttp = new XMLHttpRequest();
+const pedirNoticias = async () => {
   let consulta = document.getElementById("query").value;
   consulta = consulta.trim();
 
@@ -31,23 +27,21 @@ function obtenerNoticias() {
     consulta +
     "&lang=es&max=5&token=be56fa792e1ba8e4fb52a3633eea134f";
 
-  xmlhttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      let myObj = JSON.parse(this.responseText);
+  const resp = await fetch(url);
+  const data = await resp.json();
 
-      // Continuar armando la noticia en HTML
-      generarNoticias(myObj);
-    }
-  };
-  xmlhttp.open("GET", url, true);
-  xmlhttp.send();
+  // Continuar armando la noticia en HTML
+  generarNoticias(data);
 
   // Continuar guardando la consulta en Últimas búsquedas
   manipularRecientes(consulta);
 
   // Continuar guardando la consulta como Última consulta.
   ultimaConsulta(consulta);
-}
+};
+
+// Listener click botón "Obtener noticias"
+botonDeAccion.addEventListener("click", pedirNoticias);
 
 function generarNoticias(obj) {
   let out = "";
@@ -177,11 +171,62 @@ function desplegarUsuario(usuario) {
   document.getElementById("id02").innerHTML =
     "<p>Hola " +
     usuario +
-    '</p><input type="button" onclick="cerrarSesion()" value="Cerrar sesión" />';
+    '</p><input type="button" onclick="cerrarSesion(false)" value="Cerrar sesión" />';
 }
 
 // Cerrando sesión, borrando local y refrescando la página
-function cerrarSesion() {
-  localStorage.clear();
-  document.location.reload();
+function cerrarSesion(param) {
+  // Cerrar sesión manual
+
+  if (!param) {
+    swal({
+      text: "Cerrando sesión.",
+      icon: "warning",
+    });
+
+    setTimeout(() => {
+      localStorage.clear();
+      document.location.reload();
+    }, 2000);
+
+    // Cerrar sesión por inactividad
+  } else {
+    // Si no hay usuario logueado no cerrar sesión
+    if (!usuario) {
+      return tiempoDeInactividad().then((res) => {
+        cerrarSesion(res);
+      });
+    }
+
+    swal({
+      text: "Cerrando sesión por inactividad.",
+      icon: "warning",
+    });
+
+    setTimeout(() => {
+      localStorage.clear();
+      document.location.reload();
+    }, 3000);
+  }
 }
+
+// Cerrando sesión por inactividad con promesa
+const tiempoDeInactividad = () => {
+  return new Promise((resolve, reject) => {
+    let time;
+    resetTimer();
+    document.onmousemove = resetTimer;
+    document.onkeydown = resetTimer;
+
+    function resetTimer() {
+      clearTimeout(time);
+      time = setTimeout(() => {
+        resolve(true);
+      }, 30000);
+    }
+  });
+};
+
+tiempoDeInactividad().then((res) => {
+  cerrarSesion(res);
+});
